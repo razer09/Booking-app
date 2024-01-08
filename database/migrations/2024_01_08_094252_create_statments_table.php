@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('type');
             $table->decimal('amount', 10, 2);
             $table->decimal('balance', 10, 2);
-            $table->foreignId('transfer_to_user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->decimal('recepient_balance', 10, 2)->nullable();
+            $table->foreignId('recepiant_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

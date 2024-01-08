@@ -63,7 +63,7 @@ class BankActionsController extends Controller
             'amount' => $request->amount,
             'balance' => $user->balance,
         ]);
-        
+
         return Redirect::back()->with('success', 'Withdraw with success.');
     }
 
@@ -91,7 +91,7 @@ class BankActionsController extends Controller
         $user = auth()->user();
         $user->balance -= $request->amount;
         $user->save();
-        
+
         // update the recipient's balance
         $recipient = User::where('email', $request->email)->first();
         $recipient->balance += $request->amount;
@@ -103,11 +103,12 @@ class BankActionsController extends Controller
             'type' => 'transfer',
             'amount' => $request->amount,
             'balance' => $user->balance,
-            'transfer_to_user_id' => $recipient->id,
+            'recepient_balance' => $recipient->balance,
+            'recepiant_id' => $recipient->id,
         ]);
-        
+
         // return the user
-        return Redirect::back()->with('success', 'Transfer with success.'); 
+        return Redirect::back()->with('success', 'Transfer with success.');
     }
 
     // statments function
@@ -116,9 +117,9 @@ class BankActionsController extends Controller
         // get the user
         $user = auth()->user();
         return Inertia::render('Statments', [
-            'statments' => Statments::with('user:id,email', 'transferToUser:id,email')
+            'statments' => Statments::with('user:id,email', 'recepiant:id,email')
                 ->where('user_id', $user->id)
-                ->orWhere('transfer_to_user_id', $user->id)
+                ->orWhere('recepiant_id', $user->id)
                 ->paginate(10)
                 ->through(function ($statment) {
                     return [
@@ -126,8 +127,9 @@ class BankActionsController extends Controller
                         'type'                      => $statment->type,
                         'amount'                    => $statment->amount,
                         'balance'                   => $statment->balance,
+                        'recepient_balance'         => $statment->recepient_balance,
                         'user'                      => $statment->user,
-                        'transferToUser'            => $statment->transferToUser,
+                        'recepiant'                 => $statment->recepiant,
                         'created_at'                => $statment->created_at->format('d-m-Y h:i A'),
                     ];
                 }),

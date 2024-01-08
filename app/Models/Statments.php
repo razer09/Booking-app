@@ -15,7 +15,8 @@ class Statments extends Model
         'type',
         'amount',
         'balance',
-        'transfer_to_user_id',
+        'recepient_balance',
+        'recepiant_id',
         'description',
     ];
 
@@ -24,8 +25,8 @@ class Statments extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function transferToUser()
+    public function recepiant()
     {
-        return $this->belongsTo(User::class, 'transfer_to_user_id');
+        return $this->belongsTo(User::class, 'recepiant_id');
     }
 }

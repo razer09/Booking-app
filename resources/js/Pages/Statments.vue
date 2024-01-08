@@ -5,7 +5,7 @@ import Pagination from '@/Components/Pagination.vue';
 const {statments} = defineProps(['statments']);
 
 function statmentType(statment){
-    if (statment.type == 'deposit' || (statment.type == 'transfer' && usePage().props.auth.user.id == statment.transferToUser.id)) {
+    if (statment.type == 'deposit' || (statment.type == 'transfer' && usePage().props.auth.user.id == statment.recepiant?.id)) {
         return 'Credit';
     }
     return 'Debit';
@@ -19,13 +19,21 @@ function Detail(statment) {
         case 'withdraw':
             return 'Withdraw';
         case 'transfer':
-            if (usePage().props.auth.user.id == statment.transferToUser.id) {
+            if (usePage().props.auth.user.id == statment.recepiant?.id) {
                 return 'Transferm From ' + statment.user.email;
             }
-            return 'Transferm To ' + statment.transferToUser.email;
+            return 'Transferm To ' + statment.recepiant?.email;
         default:
             return 'Unknown';
     }
+}
+
+function Balance(statment) {
+    let isRecipiant = (usePage().props.auth.user.id == statment.recepiant?.id);
+    if ((statment.type == 'transfer') && isRecipiant) {
+        return statment.recepient_balance;
+    }
+    return statment.balance;
 }
 </script>
 
@@ -98,7 +106,7 @@ function Detail(statment) {
 
                                                     <td class="px-4 py-4 text-sm whitespace-nowrap">
                                                         <div class="inline px-3 py-1 text-sm font-normal rounded text-blue-700 gap-x-2 bg-blue-100/60">
-                                                            {{statment.balance}}
+                                                            {{ Balance(statment)}}
                                                         </div>
                                                     </td>
                                                 </tr>
