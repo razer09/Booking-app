@@ -86,7 +86,7 @@ class BankActionsController extends Controller
                 new IsNotTheAuthUserEmail(),
             ],
         ]);
-
+        
         // update the user's balance
         $user = auth()->user();
         $user->balance -= $request->amount;
